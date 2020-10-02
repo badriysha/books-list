@@ -1,84 +1,82 @@
 function main() {
   const baseUrl = "https://web-server-book-dicoding.appspot.com";
   const getBook = () => {
-    const xhr = new XMLHttpRequest();
-    //   set callback
-    xhr.onload = function () {
-      const responseJson = JSON.parse(this.responseText);
-      if (responseJson.error) {
-        showResponseMessage(responseJson.message);
-      } else {
-        renderAllBooks(responseJson.books);
-      }
-    };
-
-    xhr.onerror = function () {
-      showResponseMessage();
-    };
-    //   make request
-    xhr.open("GET", `${baseUrl}/list`);
-    xhr.send();
+    fetch(`${baseUrl}/list`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseJson) => {
+        if (responseJson.error) {
+          showResponseMessage(responseJson.message);
+        } else {
+          renderAllBooks(responseJson.books);
+        }
+      })
+      .catch((error) => {
+        showResponseMessage(error);
+      });
   };
 
   // INSERT
   const insertBook = (book) => {
-    const xhr = new XMLHttpRequest();
-
-    xhr.onload = function () {
-      const responseJson = JSON.parse(this.responseText);
-      showResponseMessage(responseJson.message);
-      getBook();
-    };
-
-    xhr.onerror = function () {
-      showResponseMessage();
-    };
-
-    //   make request
-    xhr.open("POST", `${baseUrl}/add`);
-
-    //   set header
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("X-Auth-Token", "12345");
-
-    xhr.send(JSON.stringify(book));
+    fetch(`${baseUrl}/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Auth-Token": "12345",
+      },
+      body: JSON.stringify(book),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responJson) => {
+        showResponseMessage(responJson.message);
+        getBook();
+      })
+      .catch((error) => {
+        showResponseMessage(error);
+      });
   };
   // UPDATE
   const updateBook = (book) => {
-    const xhr = new XMLHttpRequest();
-
-    xhr.onload = function () {
-      const responseJson = JSON.parse(this.responseText);
-      showResponseMessage(responseJson.message);
-      getBook();
-    };
-
-    xhr.onerror = function () {
-      showResponseMessage();
-    };
-
-    xhr.open("PUT", `${baseUrl}/edit/${book.id}`);
-
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("X-Auth-Token", "12345");
-
-    xhr.send(JSON.stringify(book));
+    fetch(`${baseUrl}/edit/${book.id}`, {
+      method: "PUT",
+      headers: {
+        "X-Auth-Token": "12345",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(book),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responJson) => {
+        showResponseMessage(responJson.message);
+        getBook();
+      })
+      .catch((error) => {
+        showResponseMessage(error);
+      });
   };
   //   DELETE
   const removeBook = (bookId) => {
-    const xhr = new XMLHttpRequest();
-
-    xhr.onload = function () {
-      const responseJson = JSON.parse(this.responseText);
-      showResponseMessage(responseJson.message);
-      getBook();
-    };
-    xhr.onerror = function () {
-      showResponseMessage();
-    };
-    xhr.open("DELETE", `${baseUrl}/delete/${bookId}`);
-    xhr.setRequestHeader("X-Auth-Token", "12345");
-    xhr.send();
+    fetch(`${baseUrl}/delete/${bookId}`, {
+      method: "DELETE",
+      headers: {
+        "X-Auth-Token": "12345",
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responJson) => {
+        showResponseMessage(responJson.message);
+        getBook();
+      })
+      .catch((error) => {
+        showResponseMessage(error);
+      });
   };
 
   /*
